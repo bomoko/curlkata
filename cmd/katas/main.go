@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"text/template"
 )
 
 func main() {
@@ -20,25 +21,20 @@ func main() {
 	//set up help/description
 	cwd, _ := os.Getwd()
 	r.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		dat, err := os.ReadFile(cwd + "/templates/help.html")
+		fmt.Println(cwd)
+		tmpl, err := template.ParseFiles(cwd + "/assets/templates/help.html")
 		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(writer, err.Error())
 			return
 		}
 		writer.WriteHeader(http.StatusOK)
-		fmt.Fprintf(writer, string(dat))
+		tmpl.Execute(writer, katas.Katas)
 		return
 	})
 
+	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./assets/static"))))
 	http.Handle("/", r)
-	http.Handle("/static/", http.FileServer(http.Dir(cwd + "/assets/static")))
 	log.Fatal(http.ListenAndServe(":8080", nil))
-	//r :=
-	//r.HandleFunc("/", HomeHandler)
-	//r.HandleFunc("/products", ProductsHandler)
-	//r.HandleFunc("/articles", ArticlesHandler)
-	//http.Handle("/", r)
-	//katas.Hello()
 
 }

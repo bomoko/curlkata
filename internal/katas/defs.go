@@ -1,7 +1,6 @@
 package katas
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -18,8 +17,4 @@ var Katas = []Kata{}
 
 func getKatas() []Kata {
 	return Katas
-}
-
-func Hello() {
-	fmt.Println("Hello world")
 }
